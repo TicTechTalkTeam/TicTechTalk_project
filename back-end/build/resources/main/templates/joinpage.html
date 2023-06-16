@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IT커뮤니티 가입페이지</title>
+    <link rel="stylesheet" href="./style.css" type="text/css" />
+  </head>
+  <body>
+    <header>
+      <div class="logo">로고영역</div>
+      <a href="#">포럼게시판</a>
+      <a href="#">질문게시판</a>
+      <a href="#">자료게시판</a>
+      <div class="search">검색창</div>
+      <div class="darkmode">다크모드</div>
+      <div class="login">로그인</div>
+    </header>
+    <div class="maincontainer">
+      <form action="/join" method="post">
+        <div class="id">
+          <input class="joinform" type="text" name="id" placeholder="ID" />
+        </div>
+        <button type="button">ID 중복확인</button>
+        <div class="password">
+          <input
+            class="joinform"
+            type="password"
+            name="password"
+            placeholder="PASSWORD"
+          />
+        </div>
+<!--        <div class="password">-->
+<!--          <input-->
+<!--            class="joinform"-->
+<!--            type="password"-->
+<!--            name="password2"-->
+<!--            placeholder="PASSWORD 확인"-->
+<!--          />-->
+<!--        </div>-->
+        <div class="nickname">
+          <input
+            class="joinform"
+            type="text"
+            name="nickname"
+            placeholder="닉네임"
+          />
+        </div>
+        <button type="submit">가입하기</button>
+      </form>
+    </div>
+    <footer>Copyright ⓒ 2023 TestPage. All rights reserved.</footer>
+  </body>
+</html>

@@ -118,7 +118,7 @@ public class JwtTokenUtil {
         RefreshToken refreshTokenObject = RefreshToken.builder()
                 .tokenId(user.getUserNo())
                 .user(user)
-                .refresh_token(refreshToken)
+                .refreshToken(refreshToken)
                 .build();
 
         refreshTokenRepository.save(refreshTokenObject);

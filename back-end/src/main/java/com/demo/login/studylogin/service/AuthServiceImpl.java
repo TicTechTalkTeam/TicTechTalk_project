@@ -70,7 +70,7 @@ public class AuthServiceImpl implements AuthService{
 
             // 리프레시 토큰 유효성 검증
             RefreshToken refreshToken = jwtTokenUtil.isPresentRefreshToken(user);
-            if (!refreshToken.getRefresh_token().equals(request.getHeader("RefreshToken"))) {
+            if (!refreshToken.getRefreshToken().equals(request.getHeader("RefreshToken"))) {
                 throw new AppException(ErrorCode.JWT_REFRESH_TOKEN_EXPIRED, "토큰이 유효하지 않습니다.");
             }
 

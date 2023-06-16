@@ -1,5 +1,6 @@
 
-!/.idea/
+!/.idea/*
+
 !/back-end/src/main/resources/application.yml
 !/.idea/misc.xml
 
@@ -10,6 +11,8 @@
 !/.idea/vcs.xml
 
 !/.idea/workspace.xml
+.idea/*
+.idea/
 .idea/misc.xml
 .idea/modules.xml
 .idea/TicTechTalk.iml
@@ -32,3 +35,4 @@ back-end/out/production/resources/application.yml
 back-end/build/tmp/.DS_Store
 back-end/build/.DS_Store
 back-end/build/resources/main/application.properties
+.idea/workspace.xml

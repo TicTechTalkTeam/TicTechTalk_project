@@ -40,3 +40,8 @@ back-end/build/resources/main/application.properties
 /front-end/node_modules/
 front-end/.DS_Store
 /back-end/build/
+/back-end/build/
+/back-end/build/classes/
+/back-end/build/generated/
+/back-end/build/resources/
+/back-end/build/tmp/

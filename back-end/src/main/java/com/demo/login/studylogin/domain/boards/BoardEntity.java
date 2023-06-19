@@ -55,8 +55,15 @@ public class BoardEntity {
 
     //회원과 참조 관계
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userNo")
+    @JoinColumns({
+            @JoinColumn(name = "userNo", referencedColumnName = "userNo"),
+            @JoinColumn(name = "userNick", referencedColumnName = "userNick")
+    })
     private User userEntity;
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "userNick")
+//    private User userEntity;
 
 
     public static BoardEntity toSaveEntity(BoardDTO boardDTO, User userEntity) {

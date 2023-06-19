@@ -1,5 +1,6 @@
 package com.demo.login.studylogin.domain.boards;
 
+import com.demo.login.studylogin.domain.members.User;
 import com.demo.login.studylogin.dto.CommentDTO;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name="commentTable")
+@Table(name="COMMENTTABLE")
 public class CommentEntity {
 
     @Id
@@ -25,8 +26,8 @@ public class CommentEntity {
     @Column
     private LocalDateTime cmDate;
 
-//    @Column
-//    private boolean like;
+    @Column
+    private boolean likey;
 
     @PrePersist
     private void perPersist() {
@@ -38,6 +39,10 @@ public class CommentEntity {
     @JoinColumn(name="post_no")
     private BoardEntity boardEntity;
 
+    // user : comment = 1 : N (한 회원은 게시글에 여러 댓글을 달 수 있다)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="userNo")
+    private User userEntity;
 
     public static CommentEntity toSaveEntity(CommentDTO commentDTO, BoardEntity boardEntity) {
         CommentEntity commentEntity = new CommentEntity();

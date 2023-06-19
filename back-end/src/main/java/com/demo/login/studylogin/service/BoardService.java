@@ -1,8 +1,10 @@
 package com.demo.login.studylogin.service;
 
 import com.demo.login.studylogin.domain.boards.BoardEntity;
+import com.demo.login.studylogin.domain.members.User;
 import com.demo.login.studylogin.dto.BoardDTO;
 import com.demo.login.studylogin.repository.BoardRepository;
+import com.demo.login.studylogin.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -12,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.text.html.Option;
 import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +27,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
+    private final UserRepository userRepository;
 
+
+    //게시글 조회
     @Transactional
     public List<BoardDTO> findAll() {
         List<BoardEntity> boardEntityList = boardRepository.findAll();
@@ -37,21 +43,25 @@ public class BoardService {
         }
         return boardDTOList;
     }
+
+    //게시글 상세 보기
     @Transactional
     public BoardDTO findById(Long postNo) {
         Optional<BoardEntity> optionalBoardEntity = boardRepository.findById(postNo);
         BoardEntity boardEntity = optionalBoardEntity.get();
         BoardDTO boardDTO = BoardDTO.toBoardDTO(boardEntity);
-        log.info("Service DTO"+boardDTO);
+
         return boardDTO;
     }
 
+    //게시글 쓰기
     public Long save(BoardDTO boardDTO) throws IOException {
-
+        Optional<User> optionalUserEntity = userRepository.findById(boardDTO.getUserNo());
         if(boardDTO.getBoardFile() == null){ //파일이 없을 때
-            BoardEntity boardEntity = BoardEntity.toSaveEntity(boardDTO);
+            User userEntity = optionalUserEntity.get();
+            BoardEntity boardEntity = BoardEntity.toSaveEntity(boardDTO, userEntity);
             BoardEntity savedEntity = boardRepository.save(boardEntity);
-            System.out.println(savedEntity.getPostNo());
+
             return savedEntity.getPostNo();
         }else { //첨부 파일 있음
             /*
@@ -68,24 +78,28 @@ public class BoardService {
             String savePath = "C:/projectdemo2_img/"+storedFilename; // 4.
             boardFile.transferTo(new File(savePath)); // 5.
 
-            BoardEntity boardEntity = BoardEntity.toSaveFileEntity(boardDTO, storedFilename); //6.
+            User userEntity = optionalUserEntity.get();
+            BoardEntity boardEntity = BoardEntity.toSaveFileEntity(boardDTO, storedFilename, userEntity); //6.
             BoardEntity savedEntity = boardRepository.save(boardEntity);
 
             return savedEntity.getPostNo();
         }
     }
 
+    //게시글 수정
     public BoardDTO update(BoardDTO boardDTO) throws IOException {
-
-        if(boardDTO.getFileAttached() == 1){
-            log.info("if절 진입");
+        System.out.println("진입했니?");
+        System.out.println(boardDTO.getUserNo());
+        Optional<User> optionalUserEntity = userRepository.findById(boardDTO.getUserNo());
+        log.info("optionalUserEntity: "+optionalUserEntity);
+        if(boardDTO.getBoardFile() != null){ //파일 있을 때
             BoardEntity boardEntity = BoardEntity.toUpdateFileEntity(boardDTO); // 6
             boardRepository.save(boardEntity);
 
             return findById(boardDTO.getPostNo());
         }else {
-            log.info("else절 진입");
-            BoardEntity boardEntity = BoardEntity.toUpdateEntity(boardDTO);
+            User userEntity = optionalUserEntity.get();
+            BoardEntity boardEntity = BoardEntity.toUpdateEntity(boardDTO, userEntity);
             boardRepository.save(boardEntity); //update쿼리 수행
 
             return findById(boardDTO.getPostNo());
@@ -93,9 +107,12 @@ public class BoardService {
 
     }
 
+    //게시글 삭제
     public void delete(Long postNo) {
         boardRepository.deleteById(postNo);
     }
+
+    //게시글 조회수
     @Transactional
     public void updateViews(Long postNo) {
         boardRepository.updateViews(postNo);
@@ -106,13 +123,13 @@ public class BoardService {
         int pageLimit = 5; // 한 페이지에 보여줄 글 갯수
         Page<BoardEntity> boardEntities = boardRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC,"postNo")));
 
-        Page<BoardDTO> boardDTOS = boardEntities.map(board-> new BoardDTO(board.getPostNo(), board.getAuthor(), board.getTitle(), board.getViews(), board.getPostDate()));
+        Page<BoardDTO> boardDTOS = boardEntities.map(board-> new BoardDTO(board.getPostNo(), board.getTitle(), board.getViews(), board.getPostDate()));
 
         return boardDTOS;
     }
 
-    //검색 기능
 
+    //검색 기능
     public Page<BoardDTO> forumSearch(String searchKeyword, Pageable pageable) {
         log.info("진입 확인");
         int page = pageable.getPageNumber() -1 ;
@@ -121,9 +138,19 @@ public class BoardService {
 
         log.info("잘 뽑아냈나?");
 
-        Page<BoardDTO> boardDTOS = boardEntities.map(board-> new BoardDTO(board.getPostNo(), board.getAuthor(), board.getTitle(), board.getViews(), board.getPostDate()));
+        Page<BoardDTO> boardDTOS = boardEntities.map(board-> new BoardDTO(board.getPostNo(), board.getTitle(), board.getViews(), board.getPostDate()));
 
         return boardDTOS;
     }
 
+    public BoardDTO findByIdAndUserEntity(Long postNo, User userEntity) {
+        Optional<BoardEntity> optionalBoardEntity = boardRepository.findByPostNoAndUserEntity(postNo, userEntity);
+        if(optionalBoardEntity.isPresent()){
+            BoardEntity boardEntity = optionalBoardEntity.get();
+            BoardDTO boardDTO = BoardDTO.toBoardDTO(boardEntity);
+            return boardDTO;
+        }else {
+            return null;
+        }
+    }
 }

@@ -47,6 +47,7 @@ public class JwtTokenUtil {
 
     //액세스 토큰 만료 시간
     private static final long accessTokenExpireMs = 1000 * 60 * 60;
+
     //리프레시 토큰 만료 시간 (2주)
     private static final long refreshTokenExpireMs = 1000 * 60 * 60 * 24 * 14;
     //토큰 서명 키

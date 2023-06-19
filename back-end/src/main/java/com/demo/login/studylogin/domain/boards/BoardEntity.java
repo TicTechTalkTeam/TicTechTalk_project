@@ -1,5 +1,6 @@
 package com.demo.login.studylogin.domain.boards;
 
+import com.demo.login.studylogin.domain.members.User;
 import com.demo.login.studylogin.dto.BoardDTO;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,13 +13,14 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "boardTable")
+@Table(name = "BOARDTABLE")
 public class BoardEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long postNo;
+    private Long postNo;
 
-    @Column
+    @Column(nullable = false)
     private Long category;
 
     @Column(length=50, nullable = false)
@@ -27,20 +29,14 @@ public class BoardEntity {
     @Column(length=500, nullable = false)
     private String content;
 
-    @Column
-    private String author;
-
     @Column(updatable = false)
     private LocalDateTime postDate;
 
     @Column
     private int views;
 
-    @Column
+    @Column(length=100)
     private String link;
-
-    @Column
-    private int fileAttached;
 
     @Column
     private String originFileName;
@@ -53,38 +49,41 @@ public class BoardEntity {
         postDate = LocalDateTime.now();
     }
 
+    //댓글과 참조 관계
     @OneToMany(mappedBy="boardEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<CommentEntity> commentEntityList = new ArrayList<>();
 
+    //회원과 참조 관계
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userNo")
+    private User userEntity;
 
-    public static BoardEntity toSaveEntity(BoardDTO boardDTO) {
+
+    public static BoardEntity toSaveEntity(BoardDTO boardDTO, User userEntity) {
         BoardEntity boardEntity = new BoardEntity();
 
-        boardEntity.setAuthor(boardDTO.getAuthor());
         boardEntity.setTitle(boardDTO.getTitle());
         boardEntity.setContent(boardDTO.getContent());
         boardEntity.setCategory(boardDTO.getCategory());
         boardEntity.setViews(0);
         boardEntity.setPostDate(boardDTO.getPostDate());
         boardEntity.setLink(boardDTO.getLink());
-
-        boardEntity.setFileAttached(0); //파일이 없다.
+        boardEntity.setUserEntity(userEntity);
 
         return boardEntity;
     }
 
-    public static BoardEntity toSaveFileEntity(BoardDTO boardDTO, String storedFilename) {
+    public static BoardEntity toSaveFileEntity(BoardDTO boardDTO, String storedFilename, User userEntity) {
         BoardEntity boardEntity = new BoardEntity();
 
-        boardEntity.setAuthor(boardDTO.getAuthor());
         boardEntity.setTitle(boardDTO.getTitle());
         boardEntity.setContent(boardDTO.getContent());
         boardEntity.setCategory(boardDTO.getCategory());
         boardEntity.setViews(0);
         boardEntity.setPostDate(boardDTO.getPostDate());
         boardEntity.setLink(boardDTO.getLink());
+        boardEntity.setUserEntity(userEntity);
 
-        boardEntity.setFileAttached(1); //파일이 있다.
         boardEntity.setOriginFileName(boardDTO.getBoardFile().getOriginalFilename());
         boardEntity.setStoredFileName(storedFilename);
 
@@ -92,17 +91,17 @@ public class BoardEntity {
     }
 
 
-    public static BoardEntity toUpdateEntity(BoardDTO boardDTO) {
+    public static BoardEntity toUpdateEntity(BoardDTO boardDTO, User userEntity) {
         BoardEntity boardEntity = new BoardEntity();
 
         boardEntity.setPostNo(boardDTO.getPostNo()); // id가 있어야만 update 쿼리 전달함
-        boardEntity.setAuthor(boardDTO.getAuthor());
         boardEntity.setTitle(boardDTO.getTitle());
         boardEntity.setContent(boardDTO.getContent());
         boardEntity.setCategory(boardDTO.getCategory());
         boardEntity.setViews(boardDTO.getViews());
         boardEntity.setPostDate(LocalDateTime.now());
         boardEntity.setLink(boardDTO.getLink());
+        boardEntity.setUserEntity(userEntity);
 
         return boardEntity;
     }
@@ -111,7 +110,6 @@ public class BoardEntity {
         BoardEntity boardEntity = new BoardEntity();
 
         boardEntity.setPostNo(boardDTO.getPostNo()); // id가 있어야만 update 쿼리 전달함
-        boardEntity.setAuthor(boardDTO.getAuthor());
         boardEntity.setTitle(boardDTO.getTitle());
         boardEntity.setContent(boardDTO.getContent());
         boardEntity.setCategory(boardDTO.getCategory());
@@ -119,7 +117,6 @@ public class BoardEntity {
         boardEntity.setPostDate(LocalDateTime.now());
         boardEntity.setLink(boardDTO.getLink());
 
-        boardEntity.setFileAttached(1); //파일이 있다.
         boardEntity.setOriginFileName(boardDTO.getOriginalFileName());
         boardEntity.setStoredFileName(boardDTO.getStoredFileName());
 

@@ -16,26 +16,30 @@ public class BoardDTO {
     private Long category;
     private String title;
     private String content;
-    private String author;
     private LocalDateTime postDate;
     private int views;
     private String link;
-
+    //유저 정보
+    private Long userNo;
+    private String userNick;
     //파일 첨부 관련
     private MultipartFile boardFile; //스프링에서 제공하는 interface. 실제 파일을 담아줄 수 있는 역할. save.html -> Controller 파일 담는 용도
     private String originalFileName; // 원본 파일 이름
     private String storedFileName; // 서버 저장용 파일 이름
-    private int fileAttached; // 파일 첨부 여부( 첨부1, 미첨부0)
 
-    public BoardDTO(long postNo, String author, String title, int views, LocalDateTime postDate) {
-        this.postNo = postNo;
-        this.author = author;
-        this.title = title;
-        this.views = views;
-        this.postDate = postDate;
+    public BoardDTO(Long postNo, String title, int views, LocalDateTime postDate) {
     }
 
+//    public BoardDTO(long postNo, String author, String title, int views, LocalDateTime postDate) {
+//        this.postNo = postNo;
+//        this.author = author;
+//        this.title = title;
+//        this.views = views;
+//        this.postDate = postDate;
+//    }
 
+
+    //게시글 조회할 때 Entity -> DTO 변환
     public static BoardDTO toBoardDTO(BoardEntity boardEntity) {
         BoardDTO boardDTO = new BoardDTO();
 
@@ -43,18 +47,14 @@ public class BoardDTO {
         boardDTO.setCategory(boardEntity.getCategory());
         boardDTO.setTitle(boardEntity.getTitle());
         boardDTO.setContent(boardEntity.getContent());
-        boardDTO.setAuthor(boardEntity.getAuthor());
         boardDTO.setPostDate(boardEntity.getPostDate());
         boardDTO.setViews(boardEntity.getViews());
         boardDTO.setLink(boardEntity.getLink());
+        boardDTO.setUserNo(boardEntity.getUserEntity().getUserNo());
 
-        if(boardEntity.getFileAttached() == 0) {
-            boardDTO.setFileAttached(0);
-        } else {
-            boardDTO.setFileAttached(1);
-            boardDTO.setOriginalFileName(boardEntity.getOriginFileName());
-            boardDTO.setStoredFileName(boardEntity.getStoredFileName());
-        }
+        // 파일 첨부 관련
+        boardDTO.setOriginalFileName(boardEntity.getOriginFileName());
+        boardDTO.setStoredFileName(boardEntity.getStoredFileName());
 
         return boardDTO;
     }

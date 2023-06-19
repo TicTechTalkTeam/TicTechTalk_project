@@ -1,7 +1,6 @@
 package com.demo.login.studylogin.service;
 
 import com.demo.login.studylogin.Utils.JwtTokenUtil;
-import com.demo.login.studylogin.domain.members.RefreshToken;
 import com.demo.login.studylogin.domain.members.User;
 import com.demo.login.studylogin.dto.TokenDto;
 import com.demo.login.studylogin.dto.UserJoinRequest;
@@ -29,18 +28,11 @@ import javax.servlet.http.HttpServletResponse;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final JwtTokenUtil jwtTokenUtil;
     private final BCryptPasswordEncoder encoder;
 
     @Value("${jwt.secret}")
     private String secretKey;
-    //access token 만료기간(1시간)
-//    private long accessTokenExpireTimeMs = 1000 * 60 * 60L;
-//    private long accessTokenExpireTimeMs = 1000 * 60 * 1; //2분
-//
-//    //refresh token 만료기간(2주)
-//    private long refreshTokenExpireTimeMs = 14 * 24 * 60 * 60 * 1000;
 
     public ResponseEntity<?> join(UserJoinRequest dto) {
 
@@ -68,8 +60,6 @@ public class UserService {
                         .userNo(user.getUserNo())
                         .userEmail(user.getUserEmail())
                         .userNick(user.getUserNick())
-//                        .createdAt(user.getCreatedAt())
-//                        .modifiedAt(user.getModifiedAt())
                         .build()
         );
 
@@ -86,16 +76,6 @@ public class UserService {
             throw new AppException(ErrorCode.INVALID_PASSWORD, "패스워드를 잘못 입력했습니다.");
         }
 
-        //DB에 리프레시 토큰이 있는지 확인
-//        Optional<Long> userExistsInRefreshTokens = refreshTokenRepository.existsByUserUserNo(selectedUser.getUserNo());
-//        if (userExistsInRefreshTokens != null) {
-//            throw new AppException(ErrorCode.REFRESH_TOKEN_ALREADY_EXISTS, "리프레시 토큰이 이미 존재합니다.");
-//        }
-
-//        //액세스 토큰과 리프레시 토큰 생성
-//        String accessTokenValue = JwtTokenUtil.createAccessToken(selectedUser.getUserNo(), selectedUser.getUserEmail(), selectedUser.getUserNick(), secretKey, accessTokenExpireTimeMs);
-//        String refreshTokenValue = JwtTokenUtil.createRefreshToken(selectedUser.getUserNo(), selectedUser.getUserEmail(), selectedUser.getUserNick(), secretKey, refreshTokenExpireTimeMs);
-//
         TokenDto tokenDto = jwtTokenUtil.generateTokenDto(user);
         jwtTokenUtil.tokenToHeaders(tokenDto, response);
 
@@ -104,23 +84,8 @@ public class UserService {
                         .userNo(user.getUserNo())
                         .userEmail(user.getUserEmail())
                         .userNick(user.getUserNick())
-//                        .createdAt(user.getCreatedAt())
-//                        .modifiedAt(user.getModifiedAt())
                         .build()
         );
-
-//        //리프레시 토큰은 RefreshToken 테이블에 저장
-//        RefreshToken refreshToken = new RefreshToken();
-//        refreshToken.setRefreshToken(refreshTokenValue);
-//        refreshToken.setUser(selectedUser);
-//        refreshTokenRepository.save(refreshToken);
-//
-//        //두개의 토큰을 모두 담을 수 있는 Map 생성, 토큰을 담아서 반환
-//        Map<String, String> tokenMap = new HashMap<>();
-//        tokenMap.put("accessToken", accessTokenValue);
-//        tokenMap.put("refreshToken", refreshTokenValue);
-//
-//        return tokenMap;
 
     }
 
@@ -130,14 +95,10 @@ public class UserService {
         // 토큰을 통해 실제 사용자가 DB상에 존재하는지 확인
         User user = jwtTokenUtil.getUserFromAuthentication();
         if (null == user) {
-//            throw new AppException(ErrorCode.USER_NOT_FOUND, "사용자를 찾을 수 없습니다.");
             log.info("진입2");
             return ResponseEntity.ok("USER_NOT_FOUND");
         }
         log.info("진입3");
-//        return jwtTokenUtil.deleteRefreshToken(user);
-
-//        return refreshTokenRepository.delete(refreshToken);
         jwtTokenUtil.deleteRefreshToken(user);
         return ResponseEntity.ok("로그아웃 성공");
     }

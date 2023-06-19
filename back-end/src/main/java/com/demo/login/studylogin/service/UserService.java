@@ -8,7 +8,6 @@ import com.demo.login.studylogin.dto.UserLoginRequest;
 import com.demo.login.studylogin.dto.UserResponseDto;
 import com.demo.login.studylogin.exception.AppException;
 import com.demo.login.studylogin.exception.ErrorCode;
-import com.demo.login.studylogin.repository.RefreshTokenRepository;
 import com.demo.login.studylogin.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

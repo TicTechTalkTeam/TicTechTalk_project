@@ -8,10 +8,7 @@ export const join = createAsyncThunk(
   'users/join',
   async (userData, thunkAPI) => {
     try {
-      const res = await Instance.post(
-        'users/join',
-        userData
-      );
+      const res = await Instance.post('users/join', userData);
       alert('회원가입이 완료되었습니다.');
       return thunkAPI.fulfillWithValue(res.data);
     } catch (err) {
@@ -25,6 +22,7 @@ export const login = createAsyncThunk(
   async (userData, thunkAPI) => {
     try {
       const res = await Instance.post('users/login', userData);
+      console.log('로그인 성공');
       return thunkAPI.fulfillWithValue(res.data);
     } catch (err) {
       console.log(err);
@@ -40,6 +38,7 @@ export const logout = createAsyncThunk(
       const res = await Instance.post('users/logout');
       localStorage.removeItem('accessToken');
       removeCookie('refreshToken');
+      console.log('로그아웃 성공');
       return thunkAPI.fulfillWithValue(res.data);
     } catch (err) {
       console.log(err);
@@ -54,6 +53,7 @@ export const deleteUser = createAsyncThunk(
       const res = await Instance.post('users/delete');
       localStorage.removeItem('accessToken');
       removeCookie('refreshToken');
+      console.log('회원탈퇴 성공');
       return thunkAPI.fulfillWithValue(res.data);
     } catch (err) {
       console.log(err);

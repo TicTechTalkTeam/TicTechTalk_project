@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 
 @Service
@@ -33,6 +34,7 @@ public class UserService {
     @Value("${jwt.secret}")
     private String secretKey;
 
+    @Transactional
     public ResponseEntity<?> join(UserJoinRequest dto) {
 
         //userEmail 중복 체크
@@ -74,7 +76,6 @@ public class UserService {
         if(!encoder.matches(dto.getPassword(), user.getPassword())) {
             throw new AppException(ErrorCode.INVALID_PASSWORD, "패스워드를 잘못 입력했습니다.");
         }
-
         TokenDto tokenDto = jwtTokenUtil.generateTokenDto(user);
         jwtTokenUtil.tokenToHeaders(tokenDto, response);
 
@@ -85,19 +86,15 @@ public class UserService {
                         .userNick(user.getUserNick())
                         .build()
         );
-
     }
 
     @Transactional
     public ResponseEntity<?> logout(HttpServletRequest request) {
-        log.info("진입1");
         // 토큰을 통해 실제 사용자가 DB상에 존재하는지 확인
         User user = jwtTokenUtil.getUserFromAuthentication();
         if (null == user) {
-            log.info("진입2");
             return ResponseEntity.ok("USER_NOT_FOUND");
         }
-        log.info("진입3");
         jwtTokenUtil.deleteRefreshToken(user);
         return ResponseEntity.ok("로그아웃 성공");
     }

@@ -4,8 +4,10 @@ import com.demo.login.studylogin.domain.members.User;
 import com.demo.login.studylogin.dto.BoardDTO;
 import lombok.Getter;
 import lombok.Setter;
+import net.bytebuddy.asm.Advice;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +31,7 @@ public class BoardEntity {
     @Column(length=500, nullable = false)
     private String content;
 
-    @Column(updatable = false)
+    @Column
     private LocalDateTime postDate;
 
     @Column
@@ -55,17 +57,11 @@ public class BoardEntity {
 
     //회원과 참조 관계
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumns({
-            @JoinColumn(name = "userNo", referencedColumnName = "userNo"),
-            @JoinColumn(name = "userNick", referencedColumnName = "userNick")
-    })
+    @JoinColumn(name = "userNo")
     private User userEntity;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "userNick")
-//    private User userEntity;
 
-
+    //파일 없을 때 save
     public static BoardEntity toSaveEntity(BoardDTO boardDTO, User userEntity) {
         BoardEntity boardEntity = new BoardEntity();
 
@@ -80,6 +76,7 @@ public class BoardEntity {
         return boardEntity;
     }
 
+    //파일 있을 때 save
     public static BoardEntity toSaveFileEntity(BoardDTO boardDTO, String storedFilename, User userEntity) {
         BoardEntity boardEntity = new BoardEntity();
 
@@ -98,6 +95,7 @@ public class BoardEntity {
     }
 
 
+    //파일 없을 때 update
     public static BoardEntity toUpdateEntity(BoardDTO boardDTO, User userEntity) {
         BoardEntity boardEntity = new BoardEntity();
 
@@ -113,7 +111,8 @@ public class BoardEntity {
         return boardEntity;
     }
 
-    public static BoardEntity toUpdateFileEntity (BoardDTO boardDTO) {
+    //파일 있을 때 update
+    public static BoardEntity toUpdateFileEntity (BoardDTO boardDTO, User userEntity) {
         BoardEntity boardEntity = new BoardEntity();
 
         boardEntity.setPostNo(boardDTO.getPostNo()); // id가 있어야만 update 쿼리 전달함
@@ -123,17 +122,11 @@ public class BoardEntity {
         boardEntity.setViews(boardDTO.getViews());
         boardEntity.setPostDate(LocalDateTime.now());
         boardEntity.setLink(boardDTO.getLink());
+        boardEntity.setUserEntity(userEntity);
 
         boardEntity.setOriginFileName(boardDTO.getOriginalFileName());
         boardEntity.setStoredFileName(boardDTO.getStoredFileName());
 
         return boardEntity;
     }
-
-
-
-
-
-
-
 }

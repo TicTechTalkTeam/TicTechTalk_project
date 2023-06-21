@@ -44,11 +44,12 @@ public class CommentEntity {
     @JoinColumn(name="userNo")
     private User userEntity;
 
-    public static CommentEntity toSaveEntity(CommentDTO commentDTO, BoardEntity boardEntity) {
+    public static CommentEntity toSaveEntity(CommentDTO commentDTO, BoardEntity boardEntity, User userEntity) {
         CommentEntity commentEntity = new CommentEntity();
 
         commentEntity.setCmContent(commentDTO.getCmContent());
         commentEntity.setBoardEntity(boardEntity);
+        commentEntity.setUserEntity(userEntity);
 
         return commentEntity;
     }

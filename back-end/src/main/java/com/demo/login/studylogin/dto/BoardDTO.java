@@ -22,22 +22,19 @@ public class BoardDTO {
     //유저 정보
     private Long userNo;
     private String userNick;
+
     //파일 첨부 관련
     private MultipartFile boardFile; //스프링에서 제공하는 interface. 실제 파일을 담아줄 수 있는 역할. save.html -> Controller 파일 담는 용도
     private String originalFileName; // 원본 파일 이름
     private String storedFileName; // 서버 저장용 파일 이름
 
-    public BoardDTO(Long postNo, String title, int views, LocalDateTime postDate) {
+    public BoardDTO(Long postNo, String userNick, String title, int views, LocalDateTime postDate) {
+        this.postNo = postNo;
+        this.userNick = userNick;
+        this.title = title;
+        this.views = views;
+        this.postDate = postDate;
     }
-
-//    public BoardDTO(long postNo, String author, String title, int views, LocalDateTime postDate) {
-//        this.postNo = postNo;
-//        this.author = author;
-//        this.title = title;
-//        this.views = views;
-//        this.postDate = postDate;
-//    }
-
 
     //게시글 조회할 때 Entity -> DTO 변환
     public static BoardDTO toBoardDTO(BoardEntity boardEntity) {
@@ -51,6 +48,7 @@ public class BoardDTO {
         boardDTO.setViews(boardEntity.getViews());
         boardDTO.setLink(boardEntity.getLink());
         boardDTO.setUserNo(boardEntity.getUserEntity().getUserNo());
+        boardDTO.setUserNick(boardEntity.getUserEntity().getUserNick());
 
         // 파일 첨부 관련
         boardDTO.setOriginalFileName(boardEntity.getOriginFileName());

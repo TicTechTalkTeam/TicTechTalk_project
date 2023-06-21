@@ -2,10 +2,13 @@ package com.demo.login.studylogin.domain.members;
 
 import com.demo.login.studylogin.domain.boards.BoardEntity;
 import com.demo.login.studylogin.domain.boards.CommentEntity;
+import com.demo.login.studylogin.domain.boards.ReCmEntity;
 import lombok.*;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,5 +65,9 @@ public class User {
     //CommentTable userNo를 참조 해당 유저 삭제 시 해당 유저가 쓴 댓글도 삭제
     @OneToMany(mappedBy = "userEntity", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<CommentEntity> commentEntityList = new ArrayList<>();
+
+    //RecmTable userNo를 참조
+    @OneToMany(mappedBy = "userEntity", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ReCmEntity> recmEntityList = new ArrayList<>();
 
 }

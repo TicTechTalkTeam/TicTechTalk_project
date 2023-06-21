@@ -14,7 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.swing.text.html.Option;
+
 import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +42,24 @@ public class BoardService {
             boardDTOList.add(BoardDTO.toBoardDTO(boardEntity));
         }
         return boardDTOList;
+    }
+
+    @Transactional
+    public Page<BoardDTO> paging(Pageable pageable) {
+        int page = pageable.getPageNumber() - 1;
+        int pageSize = pageable.getPageSize();
+
+        Page<BoardEntity> boardEntities = boardRepository.findAll(PageRequest.of(page , pageSize, Sort.by(Sort.Direction.DESC, "PostNo")));
+
+        Page<BoardDTO> boardDTOS = boardEntities.map(board-> new BoardDTO(
+                board.getPostNo(),
+                board.getUserEntity().getUserNick(),
+                board.getTitle(),
+                board.getViews(),
+                board.getPostDate()
+        ));
+
+        return boardDTOS;
     }
 
     //게시글 상세 보기
@@ -88,16 +106,15 @@ public class BoardService {
 
     //게시글 수정
     public BoardDTO update(BoardDTO boardDTO) throws IOException {
-        System.out.println("진입했니?");
-        System.out.println(boardDTO.getUserNo());
         Optional<User> optionalUserEntity = userRepository.findById(boardDTO.getUserNo());
-        log.info("optionalUserEntity: "+optionalUserEntity);
+
         if(boardDTO.getBoardFile() != null){ //파일 있을 때
-            BoardEntity boardEntity = BoardEntity.toUpdateFileEntity(boardDTO); // 6
+            User userEntity = optionalUserEntity.get();
+            BoardEntity boardEntity = BoardEntity.toUpdateFileEntity(boardDTO, userEntity); // 6
             boardRepository.save(boardEntity);
 
             return findById(boardDTO.getPostNo());
-        }else {
+        }else { //파일 없을 때
             User userEntity = optionalUserEntity.get();
             BoardEntity boardEntity = BoardEntity.toUpdateEntity(boardDTO, userEntity);
             boardRepository.save(boardEntity); //update쿼리 수행
@@ -105,6 +122,17 @@ public class BoardService {
             return findById(boardDTO.getPostNo());
         }
 
+    }
+
+    public BoardDTO findByIdAndUserEntity(Long postNo, User userEntity) {
+        Optional<BoardEntity> optionalBoardEntity = boardRepository.findByPostNoAndUserEntity(postNo, userEntity);
+        if(optionalBoardEntity.isPresent()){
+            BoardEntity boardEntity = optionalBoardEntity.get();
+            BoardDTO boardDTO = BoardDTO.toBoardDTO(boardEntity);
+            return boardDTO;
+        }else {
+            return null;
+        }
     }
 
     //게시글 삭제
@@ -118,39 +146,17 @@ public class BoardService {
         boardRepository.updateViews(postNo);
     }
 
-    public Page<BoardDTO> paging(Pageable pageable) {
-        int page = pageable.getPageNumber() -1 ;
-        int pageLimit = 5; // 한 페이지에 보여줄 글 갯수
-        Page<BoardEntity> boardEntities = boardRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC,"postNo")));
 
-        Page<BoardDTO> boardDTOS = boardEntities.map(board-> new BoardDTO(board.getPostNo(), board.getTitle(), board.getViews(), board.getPostDate()));
+    //검색 기능 공사중...ing...
+//    public Page<BoardDTO> forumSearch(String searchKeyword, Pageable pageable) {
+//
+//        int page = pageable.getPageNumber() -1 ;
+//        int pageLimit = 5; // 한 페이지에 보여줄 글 갯수
+//        Page<BoardEntity> boardEntities = boardRepository.findByTitleContaining(searchKeyword, PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC,"postNo")));
+//
+//        Page<BoardDTO> boardDTOS = boardEntities.map(board-> new BoardDTO(board.getPostNo(), board.getTitle(), board.getViews(), board.getPostDate()));
+//
+//        return boardDTOS;
+//    }
 
-        return boardDTOS;
-    }
-
-
-    //검색 기능
-    public Page<BoardDTO> forumSearch(String searchKeyword, Pageable pageable) {
-        log.info("진입 확인");
-        int page = pageable.getPageNumber() -1 ;
-        int pageLimit = 5; // 한 페이지에 보여줄 글 갯수
-        Page<BoardEntity> boardEntities = boardRepository.findByTitleContaining(searchKeyword, PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC,"postNo")));
-
-        log.info("잘 뽑아냈나?");
-
-        Page<BoardDTO> boardDTOS = boardEntities.map(board-> new BoardDTO(board.getPostNo(), board.getTitle(), board.getViews(), board.getPostDate()));
-
-        return boardDTOS;
-    }
-
-    public BoardDTO findByIdAndUserEntity(Long postNo, User userEntity) {
-        Optional<BoardEntity> optionalBoardEntity = boardRepository.findByPostNoAndUserEntity(postNo, userEntity);
-        if(optionalBoardEntity.isPresent()){
-            BoardEntity boardEntity = optionalBoardEntity.get();
-            BoardDTO boardDTO = BoardDTO.toBoardDTO(boardEntity);
-            return boardDTO;
-        }else {
-            return null;
-        }
-    }
 }

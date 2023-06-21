@@ -7,6 +7,7 @@ import com.demo.login.studylogin.repository.UserRepository;
 import com.demo.login.studylogin.service.AuthService;
 import com.demo.login.studylogin.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,6 +20,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping(value = "/users")
 public class UserController {
@@ -36,6 +38,7 @@ public class UserController {
     //로그인
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid UserLoginRequest dto, HttpServletResponse response) {
+        log.info("진입");
         return userService.login(dto, response);
     }
 

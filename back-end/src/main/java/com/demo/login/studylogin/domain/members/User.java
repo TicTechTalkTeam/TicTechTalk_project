@@ -3,6 +3,7 @@ package com.demo.login.studylogin.domain.members;
 import com.demo.login.studylogin.domain.boards.BoardEntity;
 import com.demo.login.studylogin.domain.boards.CommentEntity;
 import com.demo.login.studylogin.domain.boards.ReCmEntity;
+import com.demo.login.studylogin.dto.MyPageRequestDto;
 import lombok.*;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
@@ -70,4 +71,9 @@ public class User {
     @OneToMany(mappedBy = "userEntity", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<ReCmEntity> recmEntityList = new ArrayList<>();
 
+    public void toUpdateUser(MyPageRequestDto myPageRequestDto) {
+        this.userNick = myPageRequestDto.getUserNick();
+        this.userInfo = myPageRequestDto.getUserInfo();
+        this.userPicStoredFileName = myPageRequestDto.getUserPicStoredFileName();
+    }
 }

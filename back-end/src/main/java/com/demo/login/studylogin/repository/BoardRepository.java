@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
@@ -27,4 +28,7 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
 
     //해당 회원 글의 수정
     Optional<BoardEntity> findByPostNoAndUserEntity(Long postNo, User userEntity);
+
+    //UserNo로 UserEntity 안의 내용 불러오기
+    List<BoardEntity> findByUserEntityUserNo(Long userNo);
 }

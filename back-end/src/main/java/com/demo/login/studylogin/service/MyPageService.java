@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,26 @@ public class MyPageService {
     private final BoardRepository boardRepository;
     private final BookmarkRepository bookmarkRepository;
     private final JwtTokenUtil jwtTokenUtil;
+
+
+    //마이페이지 서비스
+    public User fetchUserInformation(HttpServletRequest request) {
+        Long userNo = jwtTokenUtil.getUserNoFromToken(request);
+        if (userNo == null) {
+            throw new RuntimeException("해당하는 사용자가 없습니다(토큰에서 userNo 추출 실패).");
+        }
+        User findUser = userRepository.findById(userNo)
+                .orElseThrow(() -> new RuntimeException("USER_NOT_FOUND"));
+
+        User user = User.builder()
+                .userEmail(findUser.getUserEmail())
+                .userNick(findUser.getUserNick())
+                .point(findUser.getPoint())
+                .userInfo(findUser.getUserInfo())
+                .build();
+
+        return user;
+    }
 
     //myPage 업데이트
     @Transactional

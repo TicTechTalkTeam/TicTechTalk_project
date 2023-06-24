@@ -1,17 +1,39 @@
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { getInfo, logout } from '../store/userSlice';
 
 export default function Mypage() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [userInfo, setUserInfo] = useState({});
+
+  useEffect(() => {
+    async function getList() {
+      const res = await dispatch(getInfo());
+      console.log(res);
+      // setUserInfo(res.payload);
+    }
+    getList();
+  }, []);
+
+  const logoutHandler = () => {
+    dispatch(logout());
+    sessionStorage.removeItem('TTT_login', 'login');
+    navigate('/');
+  };
+
   return (
-    <div class='myPageBox roundedRectangle darkModeElement'>
-      <div class='myPageProfile'></div>
-      <div class='mypageUserInfo'>
-        <div>abcde@gmail.com</div>
-        <div>김블랙맘바</div>
-        <div>123 point</div>
-        <div>안녕하세요 동에번쩍 서에번쩍 김블랙맘바입니다!</div>
+    <div className='myPageBox roundedRectangle darkModeElement'>
+      <div className='mypageUserInfo'>
+        <div>{userInfo.userEmail}</div>
+        <div>{userInfo.userNick}</div>
+        <div>{userInfo.point} POINT</div>
+        <div>{userInfo.userInfo}</div>
       </div>
-      <button class='btnElement'>
-        <Link to='/mypage/update'>프로필 수정하기</Link>
+      <button className='btnElement' onClick={logoutHandler}>
+        LOGOUT
       </button>
     </div>
   );

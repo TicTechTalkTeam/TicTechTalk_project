@@ -1,7 +1,22 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../logo.svg';
 
 export default function Header() {
+  const navigate = useNavigate();
+  ////////////다크모드////////////
+  // setCookie('쿠키', '쿠키테스트');
+  sessionStorage.setItem('theme', 'light');
+  const darkMode = () => {
+    const theme = sessionStorage.getItem('theme');
+    if (theme === 'light') {
+      document.querySelector('body').setAttribute('data-theme', 'dark');
+      sessionStorage.setItem('theme', 'dark');
+    } else if (theme === 'dark') {
+      document.querySelector('body').removeAttribute('data-theme');
+      sessionStorage.setItem('theme', 'light');
+    }
+  };
+  ////////////다크모드////////////
   return (
     <>
       <header>
@@ -27,9 +42,14 @@ export default function Header() {
         <label className='toggle' htmlFor='togleBtn'>
           <input className='togleBtn darkModeElement' type='checkbox' />
         </label>
-        <Link to='/mypage'>
-          <div className='profile'></div>
-        </Link>
+        <div
+          className='profile'
+          onClick={() => {
+            localStorage.getItem('accessToken')
+              ? navigate('/mypage')
+              : navigate('/login');
+          }}
+        ></div>
       </header>
     </>
   );

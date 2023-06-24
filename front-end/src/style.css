@@ -438,7 +438,7 @@ td:last-child {
 }
 
 /* 여기부터 마이페이지&내정보수정 */
-.myPageNav {
+/* .myPageNav {
   width: 60%;
   display: flex;
 }
@@ -452,49 +452,69 @@ td:last-child {
 .unselected {
   background-color: #57585c;
   color: #f3f0e5;
-}
+} */
 
 .myPageBox {
-  border-radius: 0 10px 10px 10px;
+  border-radius: 0 0 10px 10px;
   padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  > * {
+    margin: 10px;
+  }
+
+  > img {
+    width: 300px;
+  }
+
+  > form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    > input,
+    > textarea {
+      width: 60%;
+      padding: 10px;
+      border: 1px solid #007560;
+      border-radius: 10px;
+      color: inherit;
+      margin: 10px 0;
+    }
+
+    > button {
+      margin-top: 10px;
+    }
+  }
 }
 
-.mypageUserInfo > * {
-  margin: 10px;
+.mypageUserInfo {
+  > * {
+    margin: 10px;
+    text-align: center;
+  }
 }
 
-.myPageBox > * {
-  margin: 10px;
-}
-
-.myPageBox > form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.myPageBox > form > input,
-.myPageBox > form > textarea {
+.myPageNav {
   width: 60%;
-  padding: 10px;
-  border: 1px solid #007560;
-  border-radius: 10px;
-  color: inherit;
-  margin: 10px 0;
+  display: flex;
+
+  > a {
+    width: inherit;
+    height: 50px;
+    padding: 20px;
+    border-radius: 10px 10px 0 0;
+    text-align: center;
+
+    &:not(:last-child) {
+      margin-right: 5px;
+    }
+  }
 }
 
-.myPageProfile {
-  width: 6em;
-  height: 6em;
-  border-radius: 50%;
-  background-color: #ffc000;
-  margin-bottom: 10px;
-}
-
-#profileInput {
-  display: none;
+.unselected {
+  background-color: rgb(150, 150, 150);
 }

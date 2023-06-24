@@ -1,36 +1,66 @@
-export default function Mypage() {
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { deleteUser, getInfo, updateInfo } from '../store/userSlice';
+import { useForm } from 'react-hook-form';
+
+export default function MypageUpdate() {
+  const dispatch = useDispatch();
+  const [userInfo, setUserInfo] = useState({});
+  const { register, handleSubmit } = useForm();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    async function getList() {
+      const res = await dispatch(getInfo());
+      setUserInfo(res.payload);
+    }
+    getList();
+  }, []);
+
+  const infoUpdateHandler = async (data) => {
+    try {
+      const res = await dispatch(updateInfo(data));
+    } catch (err) {
+      console.log(err);
+    }
+    navigate('/mypage');
+  };
+
+  const deleteHandler = () => {
+    dispatch(deleteUser());
+    sessionStorage.removeItem('TTT_login', 'login');
+    navigate('/');
+  };
+
   return (
-    <div class='myPageBox roundedRectangle darkModeElement'>
-      <form>
-        <div class='myPageProfile'></div>
-        <label for='profileInput' class='btnElement userPicUpload'>
-          프로필 사진 업로드
-        </label>
-        <input type='file' id='profileInput' />
-        <div>abcde@gmail.com</div>
-        <div>123 point</div>
+    <div className='myPageBox roundedRectangle darkModeElement'>
+      <div className='profileInfo'>{userInfo.userEmail}</div>
+      <div className='profileInfo'>{userInfo.point} POINT</div>
+      <form onSubmit={handleSubmit(infoUpdateHandler)}>
         <input
-          type='password'
-          class='userPassword darkModeElement'
-          placeholder='비밀번호 변경'
-          value='12345'
+          defaultValue={userInfo.userNick}
+          className='darkModeElement'
+          placeholder='닉네임을 변경해주세요!'
+          {...register('userNick', { required: true })}
         />
-        <input
-          type='password'
-          class='userPassword darkModeElement'
-          placeholder='비밀번호 확인'
-          value='12345'
-        />
-        <input
-          value='김블랙맘바'
-          class='darkModeElement'
-          placeholder='닉네임'
-        />
-        <textarea class='darkModeElement'>
-          안녕하세요 동에번쩍 서에번쩍 김블랙맘바입니다!
-        </textarea>
-        <button class='btnElement'>프로필 수정</button>
+        <textarea
+          className='darkModeElement'
+          defaultValue={userInfo.userInfo}
+          placeholder='자기소개를 적어주세요!🫥'
+          {...register('userInfo')}
+        ></textarea>
+        <button className='btnElement' type='submit'>
+          프로필 수정
+        </button>
       </form>
+      <button
+        className='btnElement'
+        onClick={deleteHandler}
+        style={{ backgroundColor: '#8a8a8a' }}
+      >
+        회원탈퇴
+      </button>
     </div>
   );
 }

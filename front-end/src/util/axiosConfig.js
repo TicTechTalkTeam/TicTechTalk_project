@@ -32,14 +32,15 @@ Instance.interceptors.request.use((config) => {
 Instance.interceptors.response.use(
   // fullfiled
   async (res) => {
-    console.log(res.header);
-    console.log(res.data);
-    const accessToken = res.headers['authorization'].split(' ')[1];
-    const refreshToken = res.headers['refreshtoken'];
-    console.log(accessToken);
-    localStorage.setItem('accessToken', accessToken);
-    setCookie('refreshToken', refreshToken);
-    return res;
+    console.log(res);
+    if (res.headers.authorization) {
+      const accessToken = res.headers['authorization'].split(' ')[1];
+      const refreshToken = res.headers['refreshtoken'];
+      console.log(accessToken);
+      localStorage.setItem('accessToken', accessToken);
+      setCookie('refreshToken', refreshToken);
+    }
+    return res.data;
   },
 
   // rejected

@@ -66,7 +66,7 @@ export const getInfo = createAsyncThunk(
   async (payload, thunkAPI) => {
     try {
       const res = await Instance.get('mypage/info');
-      return thunkAPI.fulfillWithValue(res.data);
+      return thunkAPI.fulfillWithValue(res);
     } catch (err) {
       console.log(err);
     }
@@ -77,7 +77,7 @@ export const updateInfo = createAsyncThunk(
   'users/updateInfo',
   async (payload, thunkAPI) => {
     try {
-      const res = await Instance.post('mypage/update', payload);
+      const res = await Instance.put('mypage/update', payload);
       if (res.data === 'NIKCNAME_DUPLICATED') {
         alert('중복된 닉네임입니다.');
         return;

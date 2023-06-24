@@ -13,7 +13,7 @@ export default function Mypage() {
     async function getList() {
       const res = await dispatch(getInfo());
       console.log(res);
-      // setUserInfo(res.payload);
+      setUserInfo(res.payload);
     }
     getList();
   }, []);

@@ -13,6 +13,7 @@ import MypageNav from './router/MypageNav';
 import BoardWrite from './router/BoardWrite';
 import Login from './router/Login';
 import Join from './router/Join';
+import ReadOnlyBoard from './router/ReadOnlyBoard';
 
 function App() {
   const router = createBrowserRouter([
@@ -92,7 +93,7 @@ function App() {
           element: (
             <>
               <MypageNav />
-              <Board />
+              <ReadOnlyBoard />
             </>
           ),
         },
@@ -101,7 +102,7 @@ function App() {
           element: (
             <>
               <MypageNav />
-              <Board />
+              <ReadOnlyBoard />
             </>
           ),
         },
